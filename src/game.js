@@ -21,7 +21,7 @@ function animationCallback() {
   if(delta >= TICK_RATE) {
     lastTime = now;
     //console.log("live tick:", delta)
-    liveTick(delta);
+    liveTick(delta, state);
     updateUI();
   }
   //queue next frame

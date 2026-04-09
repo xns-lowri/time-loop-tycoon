@@ -1,7 +1,3 @@
-import { state } from "./state.js"
-
-//const LOOP_DURATION = 60;
-
 // base rates
 const base_work = 1;
 const base_study = 0.5;
@@ -11,7 +7,7 @@ const factor_work = 0.15;
 const factor_study = 0.05;
 
 
-export function liveTick(dt) {
+export function liveTick(dt, state) {
   dt *= 1;
 
   let dt_max = 0; //most dt to add to current loop
@@ -24,14 +20,14 @@ export function liveTick(dt) {
     //console.log("do increment loop", dt, dt_max.toFixed(3), extra.toFixed(3));
 
     let this_dt = Math.min(dt, dt_max); //select min from dt, max
-    incrementLoop(this_dt);
+    incrementLoop(this_dt, state);
 
     dt = extra; //dt on next loop is this loop's overspill
     //console.log("do increment loop", dt, (state.duration - state.curtime).toFixed(3), extra.toFixed(3))
   } while(extra > 0);
 }
 
-function incrementLoop(dt) {
+function incrementLoop(dt, state) {
   //console.log("incrementing loop:", dt);
   state.curtime += dt;
   state.elapsed += dt;
@@ -49,11 +45,11 @@ function incrementLoop(dt) {
   }
 
   if (state.curtime >= state.duration) {
-    endLoop();
+    endLoop(state);
   }
 }
 
-function endLoop() {
+function endLoop(state) {
   // calculate next rest bonus
   const newRest = 1 + 0.02 * Math.pow(state.sleepTime, 0.8);
 
