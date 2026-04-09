@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Time Loop Tycoon</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 5px; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="timeloop" id="timeloop-0">
+
+<h2>⏱️ Loop: <span id="time">0</span> / <span id="duration">0</span></h2>
+<h3>Loop #<span id="loop">1</span></h3>
+
+<p>💰 Resources: <span id="res">0</span></p>
+<p>🧠 Knowledge: <span id="know">0</span></p>
+<p>😴 Rested: <span id="rest">1.0</span>x</p>
+<p>✨ Spare Time: <span id="spare">0</span></p>
+
+<hr>
+
+<button id="work">Work</button>
+<button id="study">Study</button>
+<button id="sleep">Sleep</button>
+
+<p>Current Action: <span id="action">none</span></p>
+
+</div>
+
+<script type="module" src="./src/game.js"></script>
+
+</body>
+</html>
