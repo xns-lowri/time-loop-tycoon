@@ -16,7 +16,7 @@
     </div>
 
 
-    <div class="nav">
+    <div class="nav lmargin">
       <button class="nav-btn">Loop</button>
       <button class="nav-btn locked">Locked 🔒</button>
       <button class="nav-btn locked">Locked 🔒</button>
@@ -31,10 +31,10 @@
     <div class="loop-grid">
 
       <!-- ACTIVE LOOP -->
-      <div class="loop-card">
+      <div class="loop-card" id="loop-card-0">
 
         <div class="loop-header">
-            <div id="loop-progress-bar"></div>
+            <div id="loop-progress-bar" class="loop-progress-bar"></div>
 
             <div class="loop-header-content">
                 <div class="ctext"><div>Loop #<span id="loop">0</span></div></div>
@@ -59,8 +59,11 @@
           <div class="progress">
             Current Action: <span id="action">None</span>
           </div>
-
-            <button id="cheat1" class="grow">skip</button>
+          <div>
+            <button id="skip" class="grow">skip</button>
+            <button id="add1" class="grow">+1s</button>
+            <button id="add10" class="grow">+10s</button>
+          </div>
         </div>
       </div>
 
@@ -91,13 +94,13 @@
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
-    <div class="nav">
+    <div class="nav rmargin">
         <button onclick="saveGame()">Save</button>
         <button onclick="loadGame()">Load</button>
         <button onclick="resetGame()">Reset</button>
     </div>
     
-    <div class="nav">
+    <div class="nav lmargin">
       <button class="nav-btn locked">Locked 🔒</button>
       <button class="nav-btn locked">Locked 🔒</button>
     </div>

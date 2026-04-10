@@ -1,0 +1,131 @@
+// base rates
+const base_work = 1;
+const base_study = 0.5;
+
+//factors - todo move to loop
+const factor_work = 0.15;
+const factor_study = 0.05;
+const factor_rest = 0.02;
+
+export function loopUpdateAction(action, loop) {
+    //updates action of selected loop and pushes change to actions log
+    loop.action = action;
+    loop.actions.push({action: action, time: loop.curtime});
+}
+
+export function loopUpdateCheat(state, action, loop) {
+  if(action === 'cheat-skiploop') {
+    state.sparetime += liveTickLoop(loop.duration - loop.curtime, loop);
+    //updateUI(state);
+  }
+  if(action === 'cheat-loopadd1') {
+    state.sparetime += liveTickLoop(1, loop);
+    //updateUI(state);
+  }
+  if(action === 'cheat-loopadd10') {
+    state.sparetime += liveTickLoop(10, loop);
+    //updateUI(state);
+  }
+}
+
+export function liveTickAllLoops(dt, state) {
+  for(const loop of state.timeloops) {
+    state.sparetime += liveTickLoop(dt, loop);
+  }
+  //state.sparetime = Math.round(state.sparetime * 1000) / 1000; //eee floats
+}
+
+export function liveTickLoop(dt, loop) {
+  //return 0 early if loop is idle, wait for player (or other) input
+  if(loop.action === null) { return 0; }
+
+  //dt *= 1;  //testing, todo actual dt factor within loop - augments
+  let dt_max = 0;     //most dt to add to current loop
+  let dt_remain = 0;  //dt less dt_max: pos = overspill, 0 or neg = dt within remaining loop time
+  let this_dt = 0;    //dt to apply in current loop
+
+  let sparetimegain = 0;  //experience accumulator
+
+  //runs at least once to apply dt, keeps adding cycles if dt overspills
+  do {
+    dt_max = loop.duration - loop.curtime; //most dt to add to current loop
+    dt_remain = dt - dt_max; //dt less max_dt = overspill
+    this_dt = Math.min(dt, dt_max); //select min from dt, max
+    
+    incrementLoop(this_dt, loop);
+    dt = dt_remain; //dt on next loop is this loop's overspill
+
+    if(dt_remain < 1e-6) { dt_remain = 0; } //catch tiny errors?
+
+    if (loop.curtime >= loop.duration
+      || dt_remain > 0)
+    {
+      sparetimegain += endLoop(loop);
+    }
+
+    //console.log("do increment loop", dt, (state.duration - state.curtime).toFixed(3), extra.toFixed(3))
+  } while(dt_remain > 0);
+
+  //return winnings to main - todo move to module for specific loop-phase calcs
+  return sparetimegain;
+}
+
+function incrementLoop(dt, loop) {
+  //console.log("incrementing loop:", dt, state.action);
+  loop.curtime += dt;
+  loop.elapsed += dt;
+
+  if (loop.action === 'work') {
+    loop.resource += 
+      base_work * (1 + factor_work * loop.knowledge) * loop.rested * dt;
+  }
+
+  if (loop.action === 'study') {
+    loop.knowledge += 
+      base_study * (1 + factor_study * loop.knowledge) * loop.rested * dt;
+  }
+
+  if (loop.action === 'sleep') {
+    loop.sleeptime += dt;
+  }
+}
+
+function endLoop(loop) {
+  // calculate leftover time
+  const sparetimegain = Math.floor(
+    Math.pow(loop.resource, 0.6) * loop.rested) / 10;
+
+  // calculate next rest bonus
+  let newRest = 1 + factor_rest * Math.pow(loop.sleeptime, 0.8);
+
+  if(loop.actions.length <= 1 
+    && loop.action === 'sleep') {
+    //lazy bugger bonus if only action taken was sleep
+    //
+    //take max of new rest (limit ~1.54x) and last rest
+    newRest = Math.max(newRest, loop.rested);
+    //bonus if last action was sleep
+    newRest *= 1.1;
+    //todo maybe give this a drop off after ~1hr
+  }
+
+  //loop.sparetime += sparetimegain;
+
+  if(loop.actions.length) {
+    console.log(loop.actions); //debug
+    loop.lastactions = loop.actions;
+    loop.actions = [];
+  }
+
+  // reset loop values
+  loop.curtime = 0;
+  loop.resource = 0;
+  loop.knowledge = 0;
+  loop.sleeptime = 0;
+  loop.rested = newRest;
+  //state.action = null;
+
+  loop.loops += 1;
+
+  return sparetimegain;
+}

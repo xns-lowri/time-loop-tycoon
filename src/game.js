@@ -1,32 +1,24 @@
-import { state } from "./state.js"
-import { liveTick, newAction } from "./loop.js";
-import { updateUI, bindUI, bindCheat } from "./ui.js";
 
-const TICK_RATE = 0.03; // 1 / framerate
+import { liveTickAllLoops, liveTickLoop, loopUpdateAction } from "./time_loops.js";
+import { updateUI, bindLoopControls, bindLoopCheats } from "./ui.js";
+import { initGameState } from "./state_manager.js";
 
-window.state = state;
+const TICK_RATE = 0.03; // 1 / framerate ~30fps limit
+const gameState = initGameState();
 
-function setAction(a) {
-  state.action = a;
-}
+window.state = gameState; //supposedly for debug but idk where to see it
 
-bindUI((action, event) => newAction(action, event, state));
-bindCheat((action, event) => {
-  liveTick(state.duration - state.curtime, state);
-  updateUI();
-})
 
-let lastTime = Date.now();
-
+//main update loop
 function animationCallback() {
   const now = Date.now();
-  const delta = (now - lastTime) / 1000; // seconds
+  const delta = (now - gameState.lastTime) / 1000; // seconds
   //update when delta exceeds framerate cap
   if(delta >= TICK_RATE) {
-    lastTime = now;
+    gameState.lastTime = now;
     //console.log("live tick:", delta)
-    liveTick(delta, state);
-    updateUI();
+    liveTickAllLoops(delta, gameState);
+    updateUI(gameState);
   }
   //queue next frame
   requestAnimationFrame(animationCallback);
@@ -35,6 +27,7 @@ function animationCallback() {
 requestAnimationFrame(animationCallback);
 
 /*
+//eeee dead slow n cpu hungy
 setInterval(() => {
   const now = Date.now();
   const delta = (now - lastTime) / 1000; // seconds

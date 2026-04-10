@@ -26,18 +26,23 @@ const units = [
     }
 ]
 
-export function formatDecimalAsTime(value, options = { label:'short', trim: 2 }) {
+export function formatDecimalAsTime(value, options = { label:'short' }) {
     let result = [];
+    //console.log("spare time =", value, value.toFixed(3), value.toFixed(0));
+    value = value.toFixed(3);
 
     units.forEach((unit) => {
+        let amount = Math.floor(value / unit.value);
         if(unit.value < 1) {
             //milliseconds
-            value = value - Math.floor(value);
+            amount = value - Math.floor(value);
+            amount = amount.toFixed(3);
+            amount *= 1000;
         }
-        const amount = Math.floor(value / unit.value);
         if(amount > 0 || result.length > 0) {
             result.push(`${amount}${unit[options.label]}`)
         }
+        value %= unit.value;
     });
 
     if(options.trim) {

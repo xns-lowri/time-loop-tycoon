@@ -24,8 +24,12 @@ body {
   align-items: center;
 }
 
-.nav button {
+.lmargin button {
   margin-left: 10px;
+}
+
+.rmargin button {
+  margin-right: 10px
 }
 
 .game-area {
@@ -56,7 +60,7 @@ body {
   margin-bottom: 10px;
 }
 
-#loop-progress-bar {
+.loop-progress-bar {
   position: absolute;
   top: 0;
   left: 0;
