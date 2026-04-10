@@ -1,6 +1,6 @@
 import { state } from "./state.js"
-import { liveTick } from "./loop.js";
-import { updateUI, bindUI } from "./ui.js";
+import { liveTick, newAction } from "./loop.js";
+import { updateUI, bindUI, bindCheat } from "./ui.js";
 
 const TICK_RATE = 0.03; // 1 / framerate
 
@@ -10,7 +10,11 @@ function setAction(a) {
   state.action = a;
 }
 
-bindUI();
+bindUI((action, event) => newAction(action, event, state));
+bindCheat((action, event) => {
+  liveTick(state.duration - state.curtime, state);
+  updateUI();
+})
 
 let lastTime = Date.now();
 

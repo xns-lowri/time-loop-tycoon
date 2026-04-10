@@ -1,16 +1,17 @@
 export const state = {
-  curtime: 0,
-  elapsed: 0,
-  loop: 1,
-  action: null,
+  elapsed: 0,   //overall time elapsed in card
+  sparetime: 0,  //overall experience points
 
-  duration: 60,
+  curtime: 0,   //time elapsed in current loop
+  loop: 1,      
+  action: null, //current loop action
+  actions: [],
+  lastactions: [],
 
-  res: 0,
-  know: 0,
-  rest: 1,
+  duration: 60, //current loop duration, default=60s
 
-  sleepTime: 0,
-
-  sparetime: 0
+  resource: 0,
+  knowledge: 0,
+  rested: 1,
+  sleeptime: 0
 };

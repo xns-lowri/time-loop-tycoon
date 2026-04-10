@@ -34,8 +34,12 @@
       <div class="loop-card">
 
         <div class="loop-header">
-          <div>Loop #<span id="loop">0</span></div>
-          <div>⏲️ <span id="curtime">0</span> / <span id="duration">0</span>s</div>
+            <div id="loop-progress-bar"></div>
+
+            <div class="loop-header-content">
+                <div class="ctext"><div>Loop #<span id="loop">0</span></div></div>
+                <div class="ctext"><div>⏲️ <span id="curtime">0</span> / <span id="duration">0</span>s</div></div>
+            </div>
         </div>
 
         <div class="loop-inner">
@@ -56,11 +60,12 @@
             Current Action: <span id="action">None</span>
           </div>
 
+            <button id="cheat1" class="grow">skip</button>
         </div>
       </div>
 
       <!-- EMPTY SLOTS (important for future expansion) -->
-      <div class="loop-card empty"></div>
+      <div class="loop-card empty">🔒</div>
       <!--
       <div class="loop-card empty"></div>
       <div class="loop-card empty"></div>
