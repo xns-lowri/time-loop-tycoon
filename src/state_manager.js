@@ -1,7 +1,7 @@
 
 import { 
     state as blankGameState, 
-    timeloop as blankTimeloop } from "./state.js";
+    timeloop as blankTimeloop } from "./objects/state.js";
 
 const CURRENT_VERSION = '0.0.1';
 const AUTOSAVE_LABEL = 'timeloopTycoonAutosave';

@@ -1,4 +1,4 @@
-import { formatDecimalAsTime, capitalFirst } from "./string_format.js";
+import { formatDecimalAsTime, capitalFirst } from "./helpers/string_format.js";
 
 /* TOP LEVEL (MAIN UI) RENDERING */
 //render (update) main UI elements
