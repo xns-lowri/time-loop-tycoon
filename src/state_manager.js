@@ -78,7 +78,7 @@ export function saveGame(gameState, auto) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "timeloop_save.json"
+        a.download = `timelooptycoon-${new Date().toISOString()}.json`;
         a.click();
         URL.revokeObjectURL(url);
     }

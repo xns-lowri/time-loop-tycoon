@@ -39,7 +39,7 @@ export function formatDecimalAsTime(value, options = { label:'short' }) {
             amount = amount.toFixed(3);
             amount *= 1000;
         }
-        if(amount > 0 || result.length > 0) {
+        if(amount > 0) { //|| result.length > 0) {
             result.push(`${amount}${unit[options.label]}`)
         }
         value %= unit.value;
