@@ -107,16 +107,24 @@ button {
   background: #2a3242;
   color: white;
   border: none;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1em;
 }
 
+.stats {
+  margin-bottom: 4px;
+}
+
 .actions {
     display: flex;
     justify-content: space-between;
-    flex: 1;
+}
+
+.progress {
+  display: flex;
+  justify-content: space-between;
 }
 
 button:hover {
@@ -131,6 +139,17 @@ button.locked {
 button.grow {
     flex-grow: 1;
     margin: 5px;
+}
+
+button.active-action {
+  background: #4facfe;
+  box-shadow: 0 0 10px #4facfe88;
+}
+
+button.smaller {
+  padding: 3px;
+  margin: 5px 5px;
+  margin-left: 0px;
 }
 
 .bottom-bar {
@@ -149,4 +168,14 @@ button.grow {
 .ctext {
     display: flex;
     align-items: center;
+}
+
+
+.pulse {
+  animation: pulseAnim 0.2s ease;
+}
+@keyframes pulseAnim {
+  0%   { transform: scale(1); color: white; }
+  30%  { transform: scale(1.2); color: #7dff7d; }
+  100% { transform: scale(1); color: white; }
 }

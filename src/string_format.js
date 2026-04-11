@@ -51,3 +51,7 @@ export function formatDecimalAsTime(value, options = { label:'short' }) {
 
     return result.length ? result.join(" ") : "0s";
 }
+
+export function capitalFirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

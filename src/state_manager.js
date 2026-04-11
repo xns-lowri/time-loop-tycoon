@@ -1,30 +1,85 @@
-import { loopUpdateAction, loopUpdateCheat } from "./time_loops.js";
+
 import { 
     state as blankGameState, 
-    timeloop as blankTimeloop 
-} from "./state.js";
-import { bindLoopUI } from "./ui.js";
+    timeloop as blankTimeloop } from "./state.js";
 
-export function initGameState() {
-    //todo try to load from last autosave
+const CURRENT_VERSION = '0.0.1';
+const AUTOSAVE_LABEL = 'timeloopTycoonAutosave';
 
-    //html stuff from ui?
-
-    //else load blank
-    const new_state = getBlankGameState();
-    
-    for(const loop of new_state.timeloops) {
-      bindLoopUI(new_state, loop, loopUpdateAction, loopUpdateCheat);
+export function initGameState(state, loadauto = true) {
+    //todo move html building from main page to script?
+    //try to load from last autosave, else load new blank game
+    let new_state = state || null;
+    if(new_state === null && loadauto) {
+        new_state = loadGame(true);
+    }
+    if(new_state === null) {
+        new_state = structuredClone(blankGameState);
+    }
+    else {
+        //todo offline progress
+        console.warn("Offline progress lost - TODO!");
     }
 
+    new_state.lastTime = Date.now();
     return new_state;
 }
 
+export function loadGame(auto) {
+    //todo
+    let savefile = null;
 
-export function getBlankGameState() {
-    const blank_state = structuredClone(blankGameState);
-    blank_state.lastTime = Date.now();
-    blank_state.timeloops.push(structuredClone(blankTimeloop));
-    
-    return blank_state;
+    if(auto) {
+        //load last autosave or return null
+        const rawload = localStorage.getItem(AUTOSAVE_LABEL);
+        if(rawload === null) { 
+            console.warn("Autosave not found, starting new game");
+            return null; 
+        }
+
+        try {
+            savefile = JSON.parse(rawload);
+
+            //const now = Date.now();
+            //savefile.gamedata.lastTime = now;
+            //savefile.gamedata.lastSave = now;
+
+            console.log("Loaded autosave!");
+            return savefile.gamedata;
+        }
+        catch(err) {
+            console.error("Failed to parse last autosave:", err);
+            return null;
+        }
+    }
+    else {
+
+    }
+
+    return null;
+}
+
+export function saveGame(gameState, auto) {
+    //pack game state with version and timestamp
+    const save_data = {
+        version: CURRENT_VERSION,
+        timestamp: Date.now(),
+        gamedata: gameState
+    };
+    const save_file = JSON.stringify(save_data);
+
+    if(auto) {
+        //autosave
+        localStorage.setItem(AUTOSAVE_LABEL, save_file);
+    }
+    else {
+        //manual save
+        const blob = new Blob([save_file], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "timeloop_save.json"
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 }

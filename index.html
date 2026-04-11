@@ -12,7 +12,7 @@
     <div class="brand">⏳ Time Loop Tycoon</div>
     
     <div class="meta">
-      <div>Spare Time: <span id="sparetime">0</span></div>
+      <span>Spare Time:</span>&nbsp;&nbsp;<span id="sparetime">0</span>
     </div>
 
 
@@ -25,13 +25,13 @@
   </div>
 
   <!-- MAIN AREA -->
-  <div class="game-area">
+  <div id="game-area" class="game-area">
 
-    <!-- LOOP GRID (future-proof) -->
-    <div class="loop-grid">
+    <!-- LOOP GRID -->
+    <div id="loop-grid" class="loop-grid">
 
       <!-- ACTIVE LOOP -->
-      <div class="loop-card" id="loop-card-0">
+      <div id="loop-card-0" class="loop-card">
 
         <div class="loop-header">
             <div id="loop-progress-bar" class="loop-progress-bar"></div>
@@ -44,20 +44,25 @@
 
         <div class="loop-inner">
 
-          <div class="stats">
+          <div id="stats" class="stats">
             <div>💰 Resource: <span id="resource">0</span></div>
             <div>🧠 Knowledge: <span id="knowledge">0</span></div>
             <div>😴 Rested: <span id="rested">1.0</span>x</div>
           </div>
 
-          <div class="actions">
-            <button id="work" class="grow">Work</button>
-            <button id="study" class="grow">Study</button>
-            <button id="sleep" class="grow">Sleep</button>
+          <div id="actions" class="actions">
+            <button id="work" class="action-btn grow">Work</button>
+            <button id="study" class="action-btn grow">Study</button>
+            <button id="sleep" class="action-btn grow">Sleep</button>
           </div>
 
-          <div class="progress">
-            Current Action: <span id="action">None</span>
+          <div id="progress" class="progress">
+            <div class="ctext"><div>Currently <span id="action">None</span>ing</div></div>
+            
+            <div>
+              <button id="automation" class="smaller locked">🔒</button>
+              <button id="augments" class="smaller">⚙️</button>
+            </div>
           </div>
           <div>
             <button id="skip" class="grow">skip</button>
@@ -67,27 +72,10 @@
         </div>
       </div>
 
-      <!-- EMPTY SLOTS (important for future expansion) -->
+      <!-- EMPTY SLOT -->
       <div class="loop-card empty">🔒</div>
-      <!--
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
+      
 
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-      <div class="loop-card empty"></div>
-        -->
     </div>
 
   </div>
@@ -95,9 +83,12 @@
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
     <div class="nav rmargin">
-        <button onclick="saveGame()">Save</button>
-        <button onclick="loadGame()">Load</button>
-        <button onclick="resetGame()">Reset</button>
+        <button id="saveGame">Save</button>
+        <button id="loadGame">Load</button>
+        <button id="resetGame">Reset</button>
+        <button id="autosave">autosave</button>
+        <button id="autoload">autoload</button>
+        <span id="next-autosave">0</span>
     </div>
     
     <div class="nav lmargin">
