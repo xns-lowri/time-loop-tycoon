@@ -32,4 +32,33 @@ export const loopcard =
             <button id="add10" class="grow">+10s</button>
         </div>
     </div>
-</div>`
+</div>`;
+
+export const loopaugments = 
+`<div class="upgrade-grid">
+
+    <div class="upgrade-card">
+        <div class="title">Better Tools</div>
+        <div class="desc">+50% work output</div>
+        <div class="cost">5 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card locked">
+        <div class="title">Coffee Breaks</div>
+        <div class="desc">+25% work speed</div>
+        <div class="cost">10 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card">
+        <div class="title">Study Techniques</div>
+        <div class="desc">+50% knowledge gain</div>
+        <div class="cost">8 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card">
+        <div class="title">Power Naps</div>
+        <div class="desc">Sleep more effective</div>
+        <div class="cost">10 Spare Time</div>
+    </div>
+
+</div>`;

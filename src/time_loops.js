@@ -1,3 +1,6 @@
+import { augments } from "./objects/upgrades_p1.js";
+import { capitalFirst } from "./helpers/string_format.js";
+
 // base rates
 const BASE_DURATION = 60;
 
@@ -143,4 +146,20 @@ export function loopUpdateCheat(action, loop) {
     //updateUI(state);
   }
   return sparetime;
+}
+
+export function loopUpgrades(state, action, loop, openModal) {
+  if(action==='automation') {
+    //automation, locked until ???
+  }
+  else if(action==='augments') {
+    //augments menu
+    const content = `<div class="upgrade-grid">${augments.map(
+      (augment) => 
+        `<div class="upgrade-card">
+          ${augment.icon}
+        </div>`
+    ).join(" ")}</div>`;
+    openModal(capitalFirst(action), content);
+  }
 }

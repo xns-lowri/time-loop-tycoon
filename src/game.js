@@ -1,7 +1,21 @@
 
-import { liveTickAllLoops, loopUpdateAction, loopUpdateCheat } from "./time_loops.js";
-import { updateUI, updateLoopActionButtons, bindMainUI, bindLoopUI, pulseElement } from "./ui.js";
-import { initGameState, loadGame, saveGame } from "./state_manager.js";
+import { 
+  liveTickAllLoops, 
+  loopUpdateAction, 
+  loopUpdateCheat,
+  loopUpgrades } from "./time_loops.js";
+import { 
+  initLoopUI,
+  updateUI, 
+  updateLoopActionButtons, 
+  bindMainUI, 
+  bindLoopUI, 
+  pulseElement, 
+  openModal } from "./ui.js";
+import { 
+  initGameState, 
+  loadGame, 
+  saveGame } from "./state_manager.js";
 
 const TICK_RATE = 0.03; // 1 / framerate ~30fps limit
 const SAVE_RATE = 15;   //save every 15s
@@ -25,29 +39,35 @@ function bindNewState(state) {
   //todo build ui stuff including:
   //todo add correct number of loop cards
   for(const loop of gameState.timeloops) {
-      //todo
-    //const card = document.getElementById(loop.cardname);
-    //todo ui building based on game state/phase etc
-    bindLoopUI(state, loop, { 
-      action: (action, loop) => {
-        loopUpdateAction(action, loop);
-        updateLoopActionButtons(loop);
-      }, 
-      cheat: (state, action, loop) => {
-        const sparetime = loopUpdateCheat(action, loop);
-        if(sparetime > 0) {
-          state.sparetime += sparetime;
-          pulseElement(document.getElementById('sparetime'));
-        }
-      }
-    });
-    //set css class for decorating active action button
-    updateLoopActionButtons(loop);
+    bindLoopCard(gameState, loop);
   }
 
   gameState.lasttime = Date.now();
   gameState.lastAutosave = Date.now() - 900;
   updateUI(gameState);
+}
+
+function bindLoopCard(state, loop) {
+  //todo
+  //const card = document.getElementById(loop.cardname);
+  initLoopUI(loop);
+  //todo ui building based on game state/phase etc
+  bindLoopUI(state, loop, { 
+    action: (action) => {
+      loopUpdateAction(action, loop);
+      updateLoopActionButtons(loop);
+    }, 
+    cheat: (state, action, loop) => {
+      const sparetime = loopUpdateCheat(action, loop);
+      if(sparetime > 0) {
+        state.sparetime += sparetime;
+        pulseElement(document.getElementById('sparetime'));
+      }
+    },
+    upgrades: (action) => loopUpgrades(state, action, loop, openModal)
+  });
+  //set css class for decorating active action button
+  updateLoopActionButtons(loop);
 }
 
 //main update loop
