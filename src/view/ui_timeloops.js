@@ -161,7 +161,6 @@ export function openAugmentsModal(state, loop, augments, buyhandler) {
 
 //modal bindings, todo refactor
 function bindLoopUpgradesModal({state, loop, buyhandler}) {
-  console.log(state, loop, buyhandler);
   const card = document.getElementById('modal-content');
   if(card === null) { return; }
   card.querySelectorAll(".upgrade-card")

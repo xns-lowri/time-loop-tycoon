@@ -49,6 +49,7 @@ function startGame(state) {
 
   //TODO calc progress with cap/limiting
   //liveTickAllLoops(game_delta, gameState);
+  //uncomment last line to update offline progress
   
   //finally update ui
   renderGame(gameState);
