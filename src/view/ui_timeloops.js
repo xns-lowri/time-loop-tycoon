@@ -209,7 +209,11 @@ export function renderLoopCard(loop) {
   card.querySelector('#prospective-resource-delta').textContent = "(+" + loop.prospectiveresourcedelta.toFixed(2) + "/s)";
   card.querySelector('#knowledge-delta').textContent = "+" + loop.knowledgedelta.toFixed(1) + "/s";
   card.querySelector('#rested-delta').textContent = "⇨ " + loop.sleeptimedelta.toFixed(2) + "x";
-  card.querySelector('#sparetime-delta').textContent = "⇨ " + formatDecimalAsTime(loop.sparetimedelta, {trim: 3});
+  card.querySelector('#sparetime-delta').textContent = "⇨ " + formatDecimalAsTime(loop.sparetimedelta, {
+    trim: 3, 
+    nomil: loop.sparetimedelta>1,
+    figs: loop.sparetimedelta>1 ? 1 : 3
+  });
   
   card.querySelector('#action').textContent = capitalFirst(loop.action || 'idl');
   card.querySelector("#loop-progress-bar").style.width = ((loop.curtime/loop.duration) * 100) + "%";

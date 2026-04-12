@@ -18,7 +18,7 @@ export const state = {
       looprunning: false,
 
       action: null,     //current loop action
-      actions: [],      //current loop actions
+      actions: [],      //actions performed in current loop
       lastactions: [],  //last loop actions
 
       //actionhooks: [],  //ehh

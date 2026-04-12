@@ -119,5 +119,36 @@ export const augments = [
                 card.querySelector('#sparetime-delta').classList.remove('hidden');
             }
         }
+    },
+    {
+        icon: "🌞",
+        id: "glasses-time",
+        name: "Time Glasses??",
+        description: "Show Spare Time as it accumulates each day",
+        lockdesc: "Try another pair first.",
+        cost: 30,
+        hooks: {
+            isLocked: (loop) => {
+                const pres = ['glasses-working', 'glasses-reading', 'glasses-sleeping'];
+                let locked = false;
+                pres.forEach((p)=>{
+                    locked ||= loop.augments.find((e)=>e.id===p)==undefined;
+                });
+                return locked;
+            },
+            /* available hooks: 
+                onInit
+                onAction
+                onLoopStart
+                onLoopTick
+                onLoopEnd 
+            */
+            onInit: (loop) => {
+                const card = document.getElementById(loop.cardname);
+                if(card === null) { return; }
+                //todo add spare time gain indicator to loop card
+                card.querySelector('#sparetime-delta').classList.remove('hidden');
+            }
+        }
     }
 ];
