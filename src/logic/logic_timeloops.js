@@ -1,6 +1,8 @@
 import { augments } from "../objects/upgrades_timeloops.js";
 import { capitalFirst } from "../helpers/string_format.js";
-import { openAugmentsModal } from "../view/ui_timeloops.js";
+import { openModal } from "../ui.js";
+import { renderAugmentsModal, bindLoopUpgradesModal } from "../view/ui_timeloops.js";
+import { spendSparetime } from "../game.js";
 
 // base rates
 const BASE_DURATION = 60;
@@ -12,6 +14,19 @@ const BASE_STUDY = 0.5;
 const FACTOR_WORK = 0.15;
 const FACTOR_STUDY = 0.05;
 const FACTOR_REST = 0.02;
+
+export function initTimeLoopLogic(state) {
+  state.timeloops.forEach((loop) => initLoop(loop));
+}
+
+function initLoop(loop) {
+  //apply all augments
+  loop.augments.forEach(augment => {
+    //rebind hooks for owned augments on restart, call onInit for each augment
+    augment.hooks = augments.find((a) => a.id===augment.id).hooks;
+    augment.hooks.onInit(loop);
+  });
+}
 
 export function liveTickAllLoops(dt, state) {
   let sparetime = 0;
@@ -72,24 +87,34 @@ function incrementLoop(dt, loop) {
   loop.curtime += dt;
   loop.elapsed += dt;
   //increment resources based on loop action
+  let delta = 0;
   switch(loop.action) {
     case 'work':
-      loop.resource += 
-        BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested * dt;
+      delta = BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested * dt;
+      loop.resource += delta;
+      loop.resourcedelta = delta / dt;
+      loop.knowledgedelta = 0;
+      //todo augment switch for showing prospective
       break;
 
     case 'study':
-      loop.knowledge += 
-        BASE_STUDY * (1 + FACTOR_STUDY * loop.knowledge) * loop.rested * dt;
+      delta = BASE_STUDY * (1 + FACTOR_STUDY * loop.knowledge) * loop.rested * dt;
+      loop.knowledge += delta;
+      loop.knowledgedelta = delta / dt;
+      loop.prospectiveresourcedelta = BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested;
       break;
 
     case 'sleep':
       loop.sleeptime += dt;
+      loop.resourcedelta = 0;
+      loop.knowledgedelta = 0;
       break;
 
     default: //including null
       break;
   }
+
+  loop.sleeptimedelta = 1 + FACTOR_REST * Math.pow(loop.sleeptime, 0.8);
 }
 
 function endLoop(loop) {
@@ -168,6 +193,25 @@ export function loopUpgrades(state, action, loop) {
   }
 }
 
+
+function openAugmentsModal(state, loop, augments, buyhandler) {
+  openModal(
+    `Augments for Loop ${loop.id}`, 
+    { //render
+      callback: renderAugmentsModal, 
+      params: {state, loop, augments}
+    },
+    { //binder
+      callback: bindLoopUpgradesModal,
+      params: {state, loop, buyhandler}
+    }
+    
+  ); //linked modal rendering through callback
+
+  //bindLoopUpgradesModal(state, loop, buyhandler);
+}
+
+
 function buyLoopAugments(state, loop, id) {
   console.log(id);
   const augment = augments.find((e) => e.id === id);
@@ -185,4 +229,11 @@ function buyLoopAugments(state, loop, id) {
   }
 
   console.log("you can buy!", state.sparetime, augment.cost, loop.id);
+  if(!spendSparetime(augment.cost)) {
+    console.error("Error buying augment", augment, state);
+    return;
+  }
+  console.log("you did buy!", state.sparetime, augment.cost, loop.id);
+  loop.augments.push(augment);
+  augment.hooks?.onInit(loop);
 }

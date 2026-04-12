@@ -185,11 +185,6 @@ span.smaller {
   border: 1px solid transparent;
 }
 
-.upgrade-card.unlocked:hover {
-  border: 1px solid #6aa9ff;
-  transform: translateY(-2px);
-}
-
 .upgrade-card .title {
   font-weight: bold;
   margin-bottom: 5px;
@@ -213,8 +208,30 @@ span.smaller {
 }
 
 /* Affordable highlight */
-.upgrade-card.affordable {
+
+/*.upgrade-card.affordable {
   border: 1px solid #4caf50;
+}*/
+
+.upgrade-card.affordable:hover {
+  border: 1px solid #4caf50;
+  /*border: 1px solid #6aa9ff;*/
+  transform: translateY(-2px);
+}
+
+.upgrade-card.unaffordable {
+  background-color: #6b1818;
+  /*border: 1px solid #af4c4c;*/
+}
+
+.upgrade-card.unaffordable:hover {
+  border: 1px solid #af4c4c;
+  transform: translateY(-2px);
+}
+
+.upgrade-card.owned {
+  border: 1px solid #4caf50;
+  background-color: #2b662d;
 }
 /* end phase 1 styles*/
 

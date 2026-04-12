@@ -54,7 +54,10 @@ export function openModal(title, content, binding) {
 /* TOP-LEVEL RENDERING */
 
 function renderModal() {
-  if(!currentModal.open) {return;}
+  if(!currentModal.open) {
+    document.getElementById('modal-overlay').classList.add("hidden")
+    return;
+  }
   if(currentModal.content.callback === null) {return;}
   const html_updated = currentModal.content.callback(currentModal.content.params, currentModal);
   if(html_updated === null) { return; } //don't update unnecessarily - ruins transitions n effects

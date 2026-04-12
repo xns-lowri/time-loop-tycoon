@@ -28,6 +28,12 @@ export const state = {
       rested: 1,
       sleeptime: 0,
 
+      resourcedelta: 0,  
+      prospectiveresourcedelta: 0,  
+      knowledgedelta: 0,
+      resteddelta: 1,
+      sleeptimedelta: 0,
+
       //todo work/study/sleep multipliers
       //todo augments
       augments: [],

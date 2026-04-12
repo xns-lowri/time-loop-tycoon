@@ -1,5 +1,6 @@
 
 import { 
+  initTimeLoopLogic,
   liveTickAllLoops } from "./logic/logic_timeloops.js";
 
 import { 
@@ -47,6 +48,8 @@ function startGame(state) {
   gameState.lasttime = now;
   gameState.lastAutosave = now - 900;
 
+  initTimeLoopLogic(gameState);
+
   //TODO calc progress with cap/limiting
   //liveTickAllLoops(game_delta, gameState);
   //uncomment last line to update offline progress
@@ -55,14 +58,14 @@ function startGame(state) {
   renderGame(gameState);
 }
 
-function gainSparetime(value) {
+export function gainSparetime(value) {
   if(value <= 0) { return; }
   gameState.sparetime += value;
   pulseElement(document.getElementById('sparetime'));
   //pulse green
 }
 
-function spendSparetime(value) {
+export function spendSparetime(value) {
   if(value <= 0) { return null; }
   if(gameState.sparetime < value) { return false; }
   gameState.sparetime -= value;

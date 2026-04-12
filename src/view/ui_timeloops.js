@@ -141,26 +141,8 @@ function bindLoopCheats(loop, handler) {
 }
 
 
-export function openAugmentsModal(state, loop, augments, buyhandler) {
-  openModal(
-    `Augments for Loop ${loop.id}`, 
-    { //render
-      callback: renderAugmentsModal, 
-      params: {state, augments}
-    },
-    { //binder
-      callback: bindLoopUpgradesModal,
-      params: {state, loop, buyhandler}
-    }
-    
-  ); //linked modal rendering through callback
-
-  //bindLoopUpgradesModal(state, loop, buyhandler);
-}
-
-
 //modal bindings, todo refactor
-function bindLoopUpgradesModal({state, loop, buyhandler}) {
+export function bindLoopUpgradesModal({state, loop, buyhandler}) {
   const card = document.getElementById('modal-content');
   if(card === null) { return; }
   card.querySelectorAll(".upgrade-card")
@@ -169,14 +151,18 @@ function bindLoopUpgradesModal({state, loop, buyhandler}) {
     });
 }
 
-function renderAugmentsModal({state, augments}, modal) {
+export function renderAugmentsModal({state, loop, augments}, modal) {
   if(modal.content.params?.last_sparetime === state.sparetime) { return null; }
   modal.content.params.last_sparetime = state.sparetime;
   return `<div class="upgrade-grid">${augments.map(
     (augment) => 
       `<div 
           id="${augment.id || ""}"
-          class="upgrade-card${state.sparetime >= augment.cost ? " unlocked" : " locked"}"
+          class="upgrade-card 
+          ${loop.augments.find((e) => e.id===augment.id) ? "owned" : 
+            augment.locked === true ? " locked" :
+            state.sparetime < augment.cost ? " unaffordable" : " affordable"}
+          "
         >
         ${augment.icon} ${formatDecimalAsTime(augment.cost, {figs: 1, nomil: true, label:'short'})}
       </div>`
@@ -206,7 +192,10 @@ export function renderLoopCard(loop) {
   card.querySelector('#resource').textContent = loop.resource.toFixed(2);
   card.querySelector('#knowledge').textContent = loop.knowledge.toFixed(1);
   card.querySelector('#rested').textContent = loop.rested.toFixed(2);
-  card.querySelector('#action').textContent = capitalFirst(loop.action || 'idle');
+  card.querySelector('#resource-delta').textContent = "+" + loop.resourcedelta.toFixed(2) + "/s";
+  card.querySelector('#knowledge-delta').textContent = "+" + loop.knowledgedelta.toFixed(1) + "/s";
+  card.querySelector('#rested-delta').textContent = "⇨ " + loop.sleeptimedelta.toFixed(2) + "x";
+  card.querySelector('#action').textContent = capitalFirst(loop.action || 'idl');
   card.querySelector("#loop-progress-bar").style.width = ((loop.curtime/loop.duration) * 100) + "%";
 }
 
