@@ -90,7 +90,7 @@ function incrementLoop(dt, loop) {
   let delta = 0;
   switch(loop.action) {
     case 'work':
-      delta = BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested * dt;
+      delta = calculateWorkRate(loop) * dt;
       loop.resource += delta;
       loop.resourcedelta = delta / dt;
       loop.knowledgedelta = 0;
@@ -98,9 +98,10 @@ function incrementLoop(dt, loop) {
       break;
 
     case 'study':
-      delta = BASE_STUDY * (1 + FACTOR_STUDY * loop.knowledge) * loop.rested * dt;
+      delta = calculateStudyRate(loop) * dt;
       loop.knowledge += delta;
       loop.knowledgedelta = delta / dt;
+      loop.resourcedelta = 0;
       loop.prospectiveresourcedelta = BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested;
       break;
 
@@ -114,13 +115,19 @@ function incrementLoop(dt, loop) {
       break;
   }
 
-  loop.sleeptimedelta = 1 + FACTOR_REST * Math.pow(loop.sleeptime, 0.8);
+  loop.prospectiveresourcedelta = calculateWorkRate(loop);
+  loop.sleeptimedelta = calculateNextRest(loop);
 }
 
-function endLoop(loop) {
-  // calculate leftover time
-  const sparetimegain = Math.floor(Math.pow(loop.resource, 0.6) * loop.rested) / 10;
-  // calculate next rest bonus
+function calculateWorkRate(loop) {
+  return BASE_WORK * (1 + FACTOR_WORK * loop.knowledge) * loop.rested;
+}
+
+function calculateStudyRate(loop) {
+  return BASE_STUDY * (1 + FACTOR_STUDY * loop.knowledge) * loop.rested;
+}
+
+function calculateNextRest(loop) {
   let newRest = 1 + FACTOR_REST * Math.pow(loop.sleeptime, 0.8);
 
   if(loop.actions.length <= 1 
@@ -131,6 +138,25 @@ function endLoop(loop) {
     newRest *= 1.1;
     //todo maybe give this a drop off after ~1hr
   }
+
+  return newRest;
+}
+
+function endLoop(loop) {
+  // calculate leftover time
+  const sparetimegain = Math.floor(Math.pow(loop.resource, 0.6) * loop.rested) / 10;
+  // calculate next rest bonus
+  //let newRest = 1 + FACTOR_REST * Math.pow(loop.sleeptime, 0.8);
+
+  //if(loop.actions.length <= 1 
+  //  && loop.action === 'sleep') {
+  //  //lazy bugger bonus if only action taken was sleep
+  //  //take max of new rest (limit ~1.54x) and last rest
+  //  newRest = Math.max(newRest, loop.rested);
+  //  newRest *= 1.1;
+  //  //todo maybe give this a drop off after ~1hr
+  //}
+  const newRest = calculateNextRest(loop);
 
   if(loop.actions.length > 0) { //if new actions were performed
     console.log(loop.actions); //debug

@@ -139,6 +139,10 @@ span.smaller {
   font-size: 0.8em;
 }
 
+div.smaller {
+  font-size: 0.8em;
+}
+
 /* night-time star effect */
 .loop-stars {
   position: absolute;
@@ -171,7 +175,7 @@ span.smaller {
 /* time loop augments and automation */
 .upgrade-grid {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 12px;
   margin-top: 15px;
 }
@@ -185,17 +189,34 @@ span.smaller {
   border: 1px solid transparent;
 }
 
-.upgrade-card .title {
+.upgrade-title {
+  height: 100%;
   font-weight: bold;
-  margin-bottom: 5px;
+  display:flex;
+  justify-content: left;
 }
 
-.upgrade-card .desc {
-  font-size: 0.85em;
+.upgrade-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-fill {
+  flex-grow: 1;
+}
+
+.upgrade-icon {
+  font-size: 1.2em;
+  padding-right: 10px;
+}
+
+.upgrade-desc {
+  font-size: 0.6em;
   opacity: 0.8;
+  margin-top: 6px;
 }
 
-.upgrade-card .cost {
+.upgrade-cost {
   margin-top: 6px;
   font-size: 0.8em;
   color: #ffd166;
@@ -337,6 +358,8 @@ button.smaller {
   padding: 16px;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  max-width: 95%;
+  max-height: 95%;
 }
 
 .modal-header {

@@ -154,18 +154,30 @@ export function bindLoopUpgradesModal({state, loop, buyhandler}) {
 export function renderAugmentsModal({state, loop, augments}, modal) {
   if(modal.content.params?.last_sparetime === state.sparetime) { return null; }
   modal.content.params.last_sparetime = state.sparetime;
+  
   return `<div class="upgrade-grid">${augments.map(
-    (augment) => 
-      `<div 
+    (augment) => {
+      const owned = loop.augments.find((e) => e.id===augment.id);
+      return `<div 
           id="${augment.id || ""}"
-          class="upgrade-card 
-          ${loop.augments.find((e) => e.id===augment.id) ? "owned" : 
-            augment.locked === true ? " locked" :
-            state.sparetime < augment.cost ? " unaffordable" : " affordable"}
-          "
-        >
-        ${augment.icon} ${formatDecimalAsTime(augment.cost, {figs: 1, nomil: true, label:'short'})}
+          class="upgrade-card` 
+          + ` ${owned ? "owned" : 
+            augment.hooks.isLocked(loop) ? " locked" :
+            state.sparetime < augment.cost ? " unaffordable" : " affordable"}`
+          + `">
+        <div class="upgrade-title">
+          <div class="upgrade-icon">${augment.icon}</div> 
+          <div class="upgrade-details">
+            <div class="smaller">${augment.name}</div>
+            <div class="upgrade-desc">${
+              augment.hooks.isLocked(loop) ? augment.lockdesc : augment.description
+            }</div>
+            <div class="flex-fill"></div>
+            <div class="upgrade-cost">${owned ? "Owned" : "Cost: "+formatDecimalAsTime(augment.cost, {figs:1,nomil:true,label:'short'})}</div>
+          </div>
+        </div>
       </div>`
+    }
   ).join(" ")}</div>`;
 }
 
@@ -192,9 +204,12 @@ export function renderLoopCard(loop) {
   card.querySelector('#resource').textContent = loop.resource.toFixed(2);
   card.querySelector('#knowledge').textContent = loop.knowledge.toFixed(1);
   card.querySelector('#rested').textContent = loop.rested.toFixed(2);
+  
   card.querySelector('#resource-delta').textContent = "+" + loop.resourcedelta.toFixed(2) + "/s";
+  card.querySelector('#prospective-resource-delta').textContent = "(+" + loop.prospectiveresourcedelta.toFixed(2) + "/s)";
   card.querySelector('#knowledge-delta').textContent = "+" + loop.knowledgedelta.toFixed(1) + "/s";
   card.querySelector('#rested-delta').textContent = "⇨ " + loop.sleeptimedelta.toFixed(2) + "x";
+  
   card.querySelector('#action').textContent = capitalFirst(loop.action || 'idl');
   card.querySelector("#loop-progress-bar").style.width = ((loop.curtime/loop.duration) * 100) + "%";
 }
@@ -229,7 +244,7 @@ const loopcard =
     <div class="loop-inner">
 
         <div id="stats" class="loop-stats">
-            <div>💰 Resource: <span id="resource">0</span> <span id="resource-delta" class="smaller hidden">+0/s</span></div>
+            <div>💰 Resource: <span id="resource">0</span> <span id="resource-delta" class="smaller hidden">+0/s</span> <span id="prospective-resource-delta" class="smaller hidden">(+0/s)</span></div>
             <div>🧠 Knowledge: <span id="knowledge">0</span> <span id="knowledge-delta" class="smaller hidden">+0/s</span></div>
             <div>😴 Rested: <span id="rested">1.0</span>x <span id="rested-delta" class="smaller hidden">⇨ 1.00x</span></div>
         </div>
@@ -258,7 +273,7 @@ const loopcard =
     </div>
 `;
 
-const loopaugments = 
+/*const loopaugments = 
 `<div class="upgrade-grid">
 
     <div class="upgrade-card">
@@ -285,4 +300,4 @@ const loopaugments =
         <div class="cost">10 Spare Time</div>
     </div>
 
-</div>`;
+</div>`;*/
