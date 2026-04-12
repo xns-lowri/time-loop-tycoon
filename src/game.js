@@ -11,7 +11,8 @@ import {
   bindMainUI, 
   bindLoopUI, 
   pulseElement, 
-  openModal } from "./ui.js";
+  openModal, 
+  bindLoopUpgradesModal } from "./ui.js";
 import { 
   initGameState, 
   loadGame, 
@@ -42,8 +43,14 @@ function bindNewState(state) {
     bindLoopCard(gameState, loop);
   }
 
-  gameState.lasttime = Date.now();
-  gameState.lastAutosave = Date.now() - 900;
+  //calculate offline progress
+  const now = Date.now();
+  const game_delta = (now - gameState.lasttime) / 1000; // seconds
+
+  gameState.lasttime = now;
+  gameState.lastAutosave = now - 900;
+
+  liveTickAllLoops(game_delta, gameState);
   updateUI(gameState);
 }
 
@@ -64,7 +71,7 @@ function bindLoopCard(state, loop) {
         pulseElement(document.getElementById('sparetime'));
       }
     },
-    upgrades: (action) => loopUpgrades(state, action, loop, openModal)
+    upgrades: (action) => loopUpgrades(state, action, loop, openModal, bindLoopUpgradesModal)
   });
   //set css class for decorating active action button
   updateLoopActionButtons(loop);
@@ -83,6 +90,8 @@ function animationCallback() {
     //console.log("live tick:", delta)
     const sparetime = liveTickAllLoops(game_delta, gameState);
     updateUI(gameState);
+    //TODO update modal??
+
     //console.log(`Gained ${sparetime} spare time`)
     if(sparetime > 0) {
       pulseElement(document.getElementById('sparetime'));

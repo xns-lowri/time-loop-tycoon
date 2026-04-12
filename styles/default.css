@@ -117,6 +117,7 @@ body {
 .loop-actions {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 2px;
 }
 
 .loop-progress {
@@ -128,6 +129,10 @@ body {
   font-size: 0.7em;
   display: flex;
   justify-content: space-between;
+}
+
+span.smaller {
+  font-size: 0.8em;
 }
 
 /* night-time star effect */
@@ -176,7 +181,7 @@ body {
   border: 1px solid transparent;
 }
 
-.upgrade-card:hover {
+.upgrade-card.unlocked:hover {
   border: 1px solid #6aa9ff;
   transform: translateY(-2px);
 }
@@ -242,8 +247,8 @@ button.active-action {
 
 button.smaller {
   padding: 3px;
-  margin: 5px 5px;
-  margin-left: 0px;
+  margin-right: 5px;
+  min-width: 32px;
 }
 
 
@@ -310,7 +315,6 @@ button.smaller {
   color: white;
   padding: 16px;
   border-radius: 10px;
-  width: 300px;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 

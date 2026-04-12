@@ -18,7 +18,7 @@ export function initGameState(state, loadauto = true) {
     }
     else {
         //todo offline progress
-        console.warn("Offline progress lost - TODO!");
+        //console.warn("Offline progress lost - TODO!");
     }
 
     new_state.lastTime = Date.now();
@@ -53,7 +53,7 @@ export function loadGame(auto) {
         }
     }
     else {
-
+        //todo load button
     }
 
     return null;

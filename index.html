@@ -2,7 +2,10 @@
 <html>
 <head>
   <title>Time Loop Tycoon</title>
+
   <link rel="stylesheet" href="./styles/default.css">
+  <!--<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>-->
+  <script type="module" src="./src/game.js"></script>
 </head>
 
 <body>
@@ -47,9 +50,9 @@
         <div class="loop-inner">
 
           <div id="stats" class="loop-stats">
-            <div>💰 Resource: <span id="resource">0</span></div>
-            <div>🧠 Knowledge: <span id="knowledge">0</span></div>
-            <div>😴 Rested: <span id="rested">1.0</span>x</div>
+            <div>💰 Resource: <span id="resource">0</span> <span id="resource-delta" class="smaller hidden">+0/s</span></div>
+            <div>🧠 Knowledge: <span id="knowledge">0</span> <span id="knowledge-delta" class="smaller hidden">+0/s</span></div>
+            <div>😴 Rested: <span id="rested">1.0</span>x <span id="rested-delta" class="smaller hidden">⇨ 1.00x</span></div>
           </div>
 
           <div id="actions" class="loop-actions">
@@ -59,7 +62,7 @@
           </div>
 
           <div id="progress" class="loop-progress">
-            <div class="ctext"><div>Currently <span id="action">None</span>ing</div></div>
+            <div class="ctext"><span>Currently <span id="action">None</span>ing</span></div>
             
             <div>
               <button id="automation" class="smaller locked">🔒</button>
@@ -115,7 +118,8 @@
       <div id="modal-content"></div>
     </div>
   </div>
+  
+  <!--<script>lucide.createIcons();</script>-->
 
-  <script type="module" src="./src/game.js"></script>
 </body>
 </html>

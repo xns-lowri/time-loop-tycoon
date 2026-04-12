@@ -5,6 +5,12 @@ export const state = {
   lasttime: 0,    //last time for delta
   nextsave: 0,    //time until next autosave
 
+  currentModal: {
+    open: false,
+    type: "augments",
+    params: {}
+  },
+
   timeloops: [
     {
       id: 0,
@@ -15,11 +21,13 @@ export const state = {
       elapsed: 0,   //overall time elapsed in card
       curtime: 0,   //time elapsed in current cycle
       loops: 1,         //loop counter, start at 1
+      looprunning: false,
 
       action: null,     //current loop action
       actions: [],      //current loop actions
       lastactions: [],  //last loop actions
-      actionhooks: [],
+
+      //actionhooks: [],  //ehh
 
       resource: 0,  //resource gained this loop
       knowledge: 0,
@@ -28,7 +36,8 @@ export const state = {
 
       //todo work/study/sleep multipliers
       //todo augments
-      augments: []
+      augments: [],
+      automation: []
     }
   ]
 };

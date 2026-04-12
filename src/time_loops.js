@@ -41,6 +41,11 @@ export function liveTickLoop(dt, loop) {
     if(dt_remain < 1e-6) { dt_remain = 0; } //catch tiny errors?
 
     this_dt = Math.min(dt, dt_max); //select min from dt, max
+
+    if(loop.looprunning === false) {
+      //todo start loop hooks
+      loop.looprunning = true;
+    }
     
     //TODO split/add hooks for automation
     //TODO ^^^^^
@@ -50,7 +55,9 @@ export function liveTickLoop(dt, loop) {
     dt = dt_remain; //dt on next loop is this loop's overspill
     if (loop.curtime >= loop.duration || dt_remain > 0)
     {
+      //todo end loop hooks
       sparetimegain += endLoop(loop);
+      //todo start loop hooks - not here ideally????
     }
     //console.log("do increment loop", dt, (state.duration - state.curtime).toFixed(3), extra.toFixed(3))
   } while(dt_remain > 0);
@@ -114,6 +121,7 @@ function endLoop(loop) {
   //state.action = null;
 
   loop.loops += 1;
+  loop.looprunning = false;
 
   return sparetimegain;
 }
@@ -148,7 +156,7 @@ export function loopUpdateCheat(action, loop) {
   return sparetime;
 }
 
-export function loopUpgrades(state, action, loop, openModal) {
+export function loopUpgrades(state, action, loop, openModal, bindModal) {
   if(action==='automation') {
     //automation, locked until ???
   }
@@ -156,10 +164,33 @@ export function loopUpgrades(state, action, loop, openModal) {
     //augments menu
     const content = `<div class="upgrade-grid">${augments.map(
       (augment) => 
-        `<div class="upgrade-card">
+        `<div 
+            id="${augment.id || ""}"
+            class="upgrade-card${state.sparetime >= augment.cost ? " unlocked" : " locked"}"
+          >
           ${augment.icon}
         </div>`
     ).join(" ")}</div>`;
     openModal(capitalFirst(action), content);
+    bindModal(state, loop, buyLoopAugments);
   }
+}
+
+export function buyLoopAugments(state, loop, id) {
+  console.log(id);
+  const augment = augments.find((e) => e.id === id);
+  console.log(augment);
+  if(augment === undefined) {
+    console.error("Augment not found:", id);
+  }
+  else if(loop.augments.filter((e) => e.id === id).length >= 1) {
+    console.log("you already have it")
+    return;
+  }
+  else if(state.sparetime < augment.cost) {
+    console.log("you can't afford it");
+    return;
+  }
+
+  console.log("you can buy!", state.sparetime, augment.cost);
 }

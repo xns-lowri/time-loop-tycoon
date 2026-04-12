@@ -14,6 +14,7 @@ export function updateUI(state) {
   for(const loop of state.timeloops) {
     updateLoopCard(loop);
   }
+  //todo render modal
 }
 
 export function pulseElement(element) {
@@ -34,6 +35,15 @@ export function openModal(modal, content) {
   modal_overlay.classList.remove('hidden');
 
   setTimeout(() => modal_window.classList.remove('pop'), 150);
+}
+
+export function bindLoopUpgradesModal(state, loop, callback) {
+  const card = document.getElementById('modal-content');
+  if(card === null) { return; }
+  card.querySelectorAll(".upgrade-card")
+    .forEach((augment) => {
+      augment.onclick = () => callback(state, loop, augment.id);
+    });
 }
 /* TOP-LEVEL RENDERING */
 
