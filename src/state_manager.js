@@ -6,7 +6,7 @@ import {
 const CURRENT_VERSION = '0.0.1';
 const AUTOSAVE_LABEL = 'timeloopTycoonAutosave';
 
-export function initGameState(state, loadauto = true) {
+export function initGame(state, loadauto = true) {
     //todo move html building from main page to script?
     //try to load from last autosave, else load new blank game
     let new_state = state || null;
@@ -21,7 +21,7 @@ export function initGameState(state, loadauto = true) {
         //console.warn("Offline progress lost - TODO!");
     }
 
-    new_state.lasttime = Date.now();
+    //new_state.lasttime = Date.now();
     return new_state;
 }
 

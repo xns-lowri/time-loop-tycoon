@@ -4,19 +4,18 @@ import {
   loopUpdateAction, 
   loopUpdateCheat,
   loopUpgrades } from "./logic/logic_timeloops.js";
+
 import { 
-  initLoopUI,
+  initUI,
   updateUI, 
-  updateLoopActionButtons, 
   bindMainUI, 
-  bindLoopUI, 
-  pulseElement, 
-  openModal, 
-  bindLoopUpgradesModal } from "./ui.js";
+  pulseElement } from "./ui.js";
+
 import { 
-  initGameState, 
+  initGame, 
   loadGame, 
   saveGame } from "./state_manager.js";
+
 
 const TICK_RATE = 0.03; // 1 / framerate ~30fps limit
 const SAVE_RATE = 15;   //save every 15s
@@ -24,61 +23,35 @@ const SAVE_RATE = 15;   //save every 15s
 let gameState = null;
 
 //get latest autosave or blank, set state and bind controls
-bindNewState(initGameState(null));
+startGame(initGame(null));
 window.state = gameState; //supposedly for debug but idk where to see it
 
-function bindNewState(state) {
+function startGame(state) {
   gameState = state; //bind new state
   //init game
   bindMainUI(gameState, {
       save: saveGame,
       load: loadGame,
-      reset: () => bindNewState(initGameState(null, false)),
-      autoload: () => bindNewState(initGameState(null, true)),
+      reset: () => startGame(initGame(null, false)),
+      autoload: () => startGame(initGame(null, true)),
   });
 
   //todo build ui stuff including:
-  //todo add correct number of loop cards
-  for(const loop of gameState.timeloops) {
-    bindLoopCard(gameState, loop);
-  }
+  initUI(gameState);
 
-  //calculate offline progress
-  /*
+  //calculate offline progress and reset lasttime
   const now = Date.now();
-  const game_delta = (now - gameState.lasttime) / 1000; // seconds
+  //const game_delta = (now - gameState.lasttime) / 1000; // seconds
   //console.log(now, gameState.lasttime, game_delta);
 
   gameState.lasttime = now;
   gameState.lastAutosave = now - 900;
 
-  liveTickAllLoops(game_delta, gameState);
-  */
+  //TODO calc progress with cap/limiting
+  //liveTickAllLoops(game_delta, gameState);
+  
   //finally update ui
   updateUI(gameState);
-}
-
-function bindLoopCard(state, loop) {
-  //todo
-  //const card = document.getElementById(loop.cardname);
-  initLoopUI(loop);
-  //todo ui building based on game state/phase etc
-  bindLoopUI(state, loop, { 
-    action: (action) => {
-      loopUpdateAction(action, loop);
-      updateLoopActionButtons(loop);
-    }, 
-    cheat: (state, action, loop) => {
-      const sparetime = loopUpdateCheat(action, loop);
-      if(sparetime > 0) {
-        state.sparetime += sparetime;
-        pulseElement(document.getElementById('sparetime'));
-      }
-    },
-    upgrades: (action) => loopUpgrades(state, action, loop, openModal, bindLoopUpgradesModal)
-  });
-  //set css class for decorating active action button
-  updateLoopActionButtons(loop);
 }
 
 //main update loop

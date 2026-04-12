@@ -65,6 +65,10 @@ body {
   cursor: pointer;
 }
 
+.loop-card.locked {
+  cursor: not-allowed;
+}
+
 .loop-card.empty:hover {
   opacity: 0.4;
   transition-duration: 200ms;
