@@ -1,9 +1,8 @@
 import {
-  openModal,
-  bindLoopUpgradesModal } from "../ui.js";
+  openModal } from "../ui.js";
 
 import { 
-  liveTickAllLoops, 
+  //liveTickAllLoops, 
   loopUpdateAction, 
   loopUpdateCheat,
   loopUpgrades } from "../logic/logic_timeloops.js";
@@ -11,89 +10,18 @@ import {
 import { 
   newElement } from "../helpers/html_helpers.js";
 
-  import { 
-    getLoopGradient, 
-    getStarsOpacity } from "../helpers/loopcard_flair.js";
+import { 
+  getLoopGradient, 
+  getStarsOpacity } from "../helpers/loopcard_flair.js";
 
-import { capitalFirst } from "../helpers/string_format.js";
+import { 
+  formatDecimalAsTime,
+  capitalFirst } from "../helpers/string_format.js";
 
-
-const loopcard = 
-`   <div id="stars" class="loop-stars"></div>
-
-    <div class="loop-header">
-        <div id="loop-progress-bar" class="loop-progress-bar"></div>
-
-        <div class="loop-header-content">
-            <div class="ctext"><div>Day #<span id="loop">0</span></div></div>
-            <div class="ctext"><div>⏲️ <span id="curtime">0</span> / <span id="duration">0</span>s</div></div>
-        </div>
-    </div>
-
-    <div class="loop-inner">
-
-        <div id="stats" class="loop-stats">
-            <div>💰 Resource: <span id="resource">0</span> <span id="resource-delta" class="smaller hidden">+0/s</span></div>
-            <div>🧠 Knowledge: <span id="knowledge">0</span> <span id="knowledge-delta" class="smaller hidden">+0/s</span></div>
-            <div>😴 Rested: <span id="rested">1.0</span>x <span id="rested-delta" class="smaller hidden">⇨ 1.00x</span></div>
-        </div>
-
-        <div id="actions" class="loop-actions">
-            <button id="work" class="action-btn grow">Work</button>
-            <button id="study" class="action-btn grow">Study</button>
-            <button id="sleep" class="action-btn grow">Sleep</button>
-        </div>
-
-        <div id="progress" class="loop-progress">
-            <div class="ctext"><span>Currently <span id="action">None</span>ing</span></div>
-            
-            <div>
-                <button id="automation" class="smaller locked">🔒</button>
-                <button id="augments" class="smaller">⚙️</button>
-            </div>
-        </div>
-        <div id="cheats" class="loop-cheats">
-            <button id="skip" class="grow">skip</button>
-            <button id="add1" class="grow">+1s</button>
-            <button id="add10" class="grow">+10s</button>
-            <button id="skip10" class="grow">10x</button>
-            <button id="skip100" class="grow">100x</button>
-        </div>
-    </div>
-`;
-
-const loopaugments = 
-`<div class="upgrade-grid">
-
-    <div class="upgrade-card">
-        <div class="title">Better Tools</div>
-        <div class="desc">+50% work output</div>
-        <div class="cost">5 Spare Time</div>
-    </div>
-
-    <div class="upgrade-card locked">
-        <div class="title">Coffee Breaks</div>
-        <div class="desc">+25% work speed</div>
-        <div class="cost">10 Spare Time</div>
-    </div>
-
-    <div class="upgrade-card">
-        <div class="title">Study Techniques</div>
-        <div class="desc">+50% knowledge gain</div>
-        <div class="cost">8 Spare Time</div>
-    </div>
-
-    <div class="upgrade-card">
-        <div class="title">Power Naps</div>
-        <div class="desc">Sleep more effective</div>
-        <div class="cost">10 Spare Time</div>
-    </div>
-
-</div>`;
 
 //todo render functions for loop card, augments, automation etc
 /*  */
-export function initAllTimeLoops(state) {
+export function initAllTimeLoops(state, handlers) {
   const game_area = document.getElementById('game-area');
   if(game_area === null) {return;} //big badda boom
 
@@ -105,7 +33,7 @@ export function initAllTimeLoops(state) {
 
   //todo add correct number of loop cards
   for(const key in state.timeloops) {
-    initTimeLoop(state, state.timeloops[key], key);
+    initTimeLoop(state, state.timeloops[key], key, handlers);
   }
 
   //TODO ADD EMPTY CARD!!!
@@ -114,7 +42,7 @@ export function initAllTimeLoops(state) {
   new_grid.appendChild(next_card);
 }
 
-function initTimeLoop(state, loop, index) {
+function initTimeLoop(state, loop, index, handlers) {
   //const card = document.getElementById(loop.cardname);
   //get loop card and init UI functions
   //TODO generate loop card elements and return these instead of direct dom editing
@@ -134,13 +62,13 @@ function initTimeLoop(state, loop, index) {
       renderLoopActionButtons(loop);
     }, 
     cheat: (state, action, loop) => {
-      const sparetime = loopUpdateCheat(action, loop);
-      if(sparetime > 0) {
+      handlers.gain(loopUpdateCheat(action, loop));
+      /*if(sparetime > 0) {
         state.sparetime += sparetime;
         pulseElement(document.getElementById('sparetime'));
-      }
+      }*/
     },
-    upgrades: (action) => loopUpgrades(state, action, loop, openModal, bindLoopUpgradesModal)
+    upgrades: (action) => loopUpgrades(state, action, loop)
   });
   //set css class for decorating active action button
   renderLoopActionButtons(loop);
@@ -213,6 +141,51 @@ function bindLoopCheats(loop, handler) {
 }
 
 
+export function openAugmentsModal(state, loop, augments, buyhandler) {
+  console.log("Augment modal:", state, loop, augments, buyhandler);
+
+  openModal(
+    state, 
+    `Augments for Loop ${loop.id}`, 
+    { //render
+      callback: renderAugmentsModal, 
+      params: {state, augments}
+    },
+    { //binder
+      callback: bindLoopUpgradesModal,
+      params: {state, loop, buyhandler}
+    }
+    
+  ); //linked modal rendering through callback
+
+  bindLoopUpgradesModal(state, loop, buyhandler);
+}
+
+
+//modal bindings, todo refactor
+function bindLoopUpgradesModal(state, loop, callback) {
+  const card = document.getElementById('modal-content');
+  if(card === null) { return; }
+  card.querySelectorAll(".upgrade-card")
+    .forEach((augment) => {
+      augment.onclick = () => callback(state, loop, augment.id);
+    });
+}
+
+function renderAugmentsModal({state, augments}, modal) {
+  if(modal.content.params?.last_sparetime === state.sparetime) { return null; }
+  modal.content.params.last_sparetime = state.sparetime;
+  return `<div class="upgrade-grid">${augments.map(
+    (augment) => 
+      `<div 
+          id="${augment.id || ""}"
+          class="upgrade-card${state.sparetime >= augment.cost ? " unlocked" : " locked"}"
+        >
+        ${augment.icon} ${formatDecimalAsTime(augment.cost, {figs: 1, nomil: true, label:'short'})}
+      </div>`
+  ).join(" ")}</div>`;
+}
+
 /* LOOP CARD (PHASE 1) RENDERING FUNCTIONS */
 export function renderLoopCards(state) {
   for(const loop of state.timeloops) {
@@ -252,3 +225,78 @@ export function renderLoopActionButtons(loop) {
   card.querySelector(`#${loop.action}`).classList.add("active-action");
 }
 /* LOOP CARD (PHASE1) */
+
+
+/* PARTIALS */
+const loopcard = 
+`   <div id="stars" class="loop-stars"></div>
+
+    <div class="loop-header">
+        <div id="loop-progress-bar" class="loop-progress-bar"></div>
+
+        <div class="loop-header-content">
+            <div class="ctext"><div>Day #<span id="loop">0</span></div></div>
+            <div class="ctext"><div>⏲️ <span id="curtime">0</span> / <span id="duration">0</span>s</div></div>
+        </div>
+    </div>
+
+    <div class="loop-inner">
+
+        <div id="stats" class="loop-stats">
+            <div>💰 Resource: <span id="resource">0</span> <span id="resource-delta" class="smaller hidden">+0/s</span></div>
+            <div>🧠 Knowledge: <span id="knowledge">0</span> <span id="knowledge-delta" class="smaller hidden">+0/s</span></div>
+            <div>😴 Rested: <span id="rested">1.0</span>x <span id="rested-delta" class="smaller hidden">⇨ 1.00x</span></div>
+        </div>
+
+        <div id="actions" class="loop-actions">
+            <button id="work" class="action-btn grow">Work</button>
+            <button id="study" class="action-btn grow">Study</button>
+            <button id="sleep" class="action-btn grow">Sleep</button>
+        </div>
+
+        <div id="progress" class="loop-progress">
+            <div class="ctext"><span>Currently <span id="action">None</span>ing</span></div>
+            
+            <div>
+                <button id="automation" class="smaller locked">🔒</button>
+                <button id="augments" class="smaller">⚙️</button>
+            </div>
+        </div>
+        <div id="cheats" class="loop-cheats">
+            <button id="skip" class="grow">skip</button>
+            <button id="add1" class="grow">+1s</button>
+            <button id="add10" class="grow">+10s</button>
+            <button id="skip10" class="grow">10x</button>
+            <button id="skip100" class="grow">100x</button>
+        </div>
+    </div>
+`;
+
+const loopaugments = 
+`<div class="upgrade-grid">
+
+    <div class="upgrade-card">
+        <div class="title">Better Tools</div>
+        <div class="desc">+50% work output</div>
+        <div class="cost">5 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card locked">
+        <div class="title">Coffee Breaks</div>
+        <div class="desc">+25% work speed</div>
+        <div class="cost">10 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card">
+        <div class="title">Study Techniques</div>
+        <div class="desc">+50% knowledge gain</div>
+        <div class="cost">8 Spare Time</div>
+    </div>
+
+    <div class="upgrade-card">
+        <div class="title">Power Naps</div>
+        <div class="desc">Sleep more effective</div>
+        <div class="cost">10 Spare Time</div>
+    </div>
+
+</div>`;

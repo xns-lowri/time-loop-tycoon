@@ -1,13 +1,10 @@
 
 import { 
-  liveTickAllLoops, 
-  loopUpdateAction, 
-  loopUpdateCheat,
-  loopUpgrades } from "./logic/logic_timeloops.js";
+  liveTickAllLoops } from "./logic/logic_timeloops.js";
 
 import { 
   initUI,
-  updateUI, 
+  renderGame, 
   bindMainUI, 
   pulseElement } from "./ui.js";
 
@@ -37,7 +34,10 @@ function startGame(state) {
   });
 
   //todo build ui stuff including:
-  initUI(gameState);
+  initUI(gameState, {
+    gain: gainSparetime,
+    spend: spendSparetime
+  });
 
   //calculate offline progress and reset lasttime
   const now = Date.now();
@@ -51,7 +51,22 @@ function startGame(state) {
   //liveTickAllLoops(game_delta, gameState);
   
   //finally update ui
-  updateUI(gameState);
+  renderGame(gameState);
+}
+
+function gainSparetime(value) {
+  if(value <= 0) { return; }
+  gameState.sparetime += value;
+  pulseElement(document.getElementById('sparetime'));
+  //pulse green
+}
+
+function spendSparetime(value) {
+  if(value <= 0) { return null; }
+  if(gameState.sparetime < value) { return false; }
+  gameState.sparetime -= value;
+  //pulse red?
+  return true;
 }
 
 //main update loop
@@ -62,17 +77,15 @@ function animationCallback() {
 
   //update when delta exceeds framerate cap
   if(game_delta >= TICK_RATE) {
+    //calculate delta for next game tick
     gameState.lasttime = now;
     gameState.nextsave = SAVE_RATE - save_delta;
     //console.log("live tick:", delta)
-    const sparetime = liveTickAllLoops(game_delta, gameState);
-    updateUI(gameState);
-    //TODO update modal??
 
-    //console.log(`Gained ${sparetime} spare time`)
-    if(sparetime > 0) {
-      pulseElement(document.getElementById('sparetime'));
-    }
+    gainSparetime(liveTickAllLoops(game_delta, gameState));
+
+    renderGame(gameState);
+    //TODO update modal?? - in ui
   }
 
   //autosave

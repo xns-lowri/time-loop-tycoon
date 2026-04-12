@@ -1,5 +1,6 @@
 import { augments } from "../objects/upgrades_timeloops.js";
 import { capitalFirst } from "../helpers/string_format.js";
+import { openAugmentsModal } from "../view/ui_timeloops.js";
 
 // base rates
 const BASE_DURATION = 60;
@@ -18,7 +19,7 @@ export function liveTickAllLoops(dt, state) {
     sparetime += liveTickLoop(dt, loop);
   }
   //console.log(sparetime)
-  state.sparetime += sparetime; //todo action event somethingy to make this flash
+  //state.sparetime += sparetime; //todo action event somethingy to make this flash
   //state.sparetime = Math.round(state.sparetime * 1000) / 1000; //eee floats
   return sparetime;
 }
@@ -156,27 +157,18 @@ export function loopUpdateCheat(action, loop) {
   return sparetime;
 }
 
-export function loopUpgrades(state, action, loop, openModal, bindModal) {
+export function loopUpgrades(state, action, loop) {
   if(action==='automation') {
     //automation, locked until ???
   }
   else if(action==='augments') {
     //augments menu
-    const content = `<div class="upgrade-grid">${augments.map(
-      (augment) => 
-        `<div 
-            id="${augment.id || ""}"
-            class="upgrade-card${state.sparetime >= augment.cost ? " unlocked" : " locked"}"
-          >
-          ${augment.icon}
-        </div>`
-    ).join(" ")}</div>`;
-    openModal(capitalFirst(action), content);
-    bindModal(state, loop, buyLoopAugments);
+    //console.log("Augments menu:", state, loop, augments, buyLoopAugments);
+    openAugmentsModal(state, loop, augments, buyLoopAugments);
   }
 }
 
-export function buyLoopAugments(state, loop, id) {
+function buyLoopAugments(state, loop, id) {
   console.log(id);
   const augment = augments.find((e) => e.id === id);
   console.log(augment);

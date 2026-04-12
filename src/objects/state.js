@@ -5,12 +5,6 @@ export const state = {
   lasttime: 0,    //last time for delta
   nextsave: 0,    //time until next autosave
 
-  currentModal: {
-    open: false,
-    type: "augments",
-    params: {}
-  },
-
   timeloops: [
     {
       id: 0,

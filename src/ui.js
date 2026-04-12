@@ -2,35 +2,17 @@ import { formatDecimalAsTime } from "./helpers/string_format.js";
 import { initAllTimeLoops, renderLoopCards } from "./view/ui_timeloops.js";
 
 
-
-export function initUI(state) {
-  initAllTimeLoops(state);
+const currentModal = {
+  open: false,
+  type: "augments",
+  content: {},
+  binding: {},
+  params: {}
 }
 
-
-//todo html injection = bad soc here :(
-export function openModal(modal, content) {
-  document.getElementById('modal-title').textContent = modal;
-  //todo select modal content from ???
-  document.getElementById('modal-content').innerHTML = content || '';
-
-  const modal_window = document.getElementById('modal-window');
-  modal_window.classList.add('pop');
-  document.getElementById('modal-overlay').classList.remove('hidden');
-  setTimeout(() => modal_window.classList.remove('pop'), 150);
+export function initUI(state, handlers) {
+  initAllTimeLoops(state, handlers);
 }
-
-export function bindLoopUpgradesModal(state, loop, callback) {
-  const card = document.getElementById('modal-content');
-  if(card === null) { return; }
-  card.querySelectorAll(".upgrade-card")
-    .forEach((augment) => {
-      augment.onclick = () => callback(state, loop, augment.id);
-    });
-}
-/* TOP-LEVEL RENDERING */
-
-
 //todo split out ui updates into modules?
 
 
@@ -47,16 +29,42 @@ export function bindMainUI(state, handlers) {
     const modal = document.getElementById('modal-overlay');
     modal.classList.add('hidden');
     //modal.style.opacity = 0;
+    const modalcontent = document.getElementById('modal-content');
+    modalcontent.innerHTML = '';
   }
 }
-
-// bindings for time loop (phase 1) controls
 /* UX BINDINGS */
 
 
+//todo html injection = bad soc here?? :(
+export function openModal(state, title, content, binding) {
+  document.getElementById('modal-title').textContent = title;
+  //todo select modal content from ???
+  currentModal.content = content;
+  currentModal.binding = binding;
+  currentModal.open = true;
+
+  //set inner content
+  //document.getElementById('modal-content').innerHTML = content(params) || '';
+
+  const modal_window = document.getElementById('modal-window');
+  modal_window.classList.add('pop');
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  setTimeout(() => modal_window.classList.remove('pop'), 150);
+}
+/* TOP-LEVEL RENDERING */
+
+function renderModal(state) {
+  if(!currentModal.open) {return;}
+  if(currentModal.content.callback === null) {return;}
+  const html_updated = currentModal.content.callback(currentModal.content.params, currentModal);
+  if(html_updated === null) { return; } //don't update unnecessarily - ruins transitions n effects
+  document.getElementById('modal-content').innerHTML = html_updated;
+}
+
 /* TOP LEVEL (MAIN UI) RENDERING */
 //render (update) main UI elements
-export function updateUI(state) {
+export function renderGame(state) {
   document.getElementById('sparetime').textContent = formatDecimalAsTime(state.sparetime);
   document.getElementById('next-autosave').textContent = 
     state.lasttime - state.lastAutosave < 800 ?
@@ -67,6 +75,12 @@ export function updateUI(state) {
   //todo later phases, switch or handler functions for each phase?
   renderLoopCards(state);
   //todo render modal
+  renderModal(state);
+  
+  //console.log(`Gained ${sparetime} spare time`)
+  /*if(sparetime > 0) {
+    pulseElement(document.getElementById('sparetime'));
+  }*/
 }
 
 export function pulseElement(element) {

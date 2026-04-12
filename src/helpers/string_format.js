@@ -32,11 +32,21 @@ export function formatDecimalAsTime(value, options = { label:'short' }) {
     value = value.toFixed(3);
 
     units.forEach((unit) => {
+        if(unit.value < 1 && options.nomil) { return; }
+
         let amount = Math.floor(value / unit.value);
+
+        if(unit.value === 1 && options.nomil) {
+            const rawval = (value / unit.value).toFixed(options.figs || 3);
+            if(rawval - amount > 1e-6) {
+                amount = rawval;
+            }
+        }
+
         if(unit.value < 1) {
             //milliseconds
             amount = value - Math.floor(value);
-            amount = amount.toFixed(3);
+            amount = amount.toFixed(options.figs || 3);
             amount *= 1000;
         }
         if(amount > 0) { //|| result.length > 0) {
