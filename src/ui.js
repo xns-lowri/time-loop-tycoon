@@ -1,6 +1,8 @@
 import { getLoopGradient, getStarsOpacity } from "./helpers/loopcard_flair.js";
 import { formatDecimalAsTime, capitalFirst } from "./helpers/string_format.js";
 
+
+
 /* TOP LEVEL (MAIN UI) RENDERING */
 //render (update) main UI elements
 export function updateUI(state) {
@@ -23,6 +25,7 @@ export function pulseElement(element) {
   setTimeout(() => element.classList.remove("pulse"), 200);
 }
 
+//todo html injection = bad soc here :(
 export function openModal(modal, content) {
   document.getElementById('modal-title').textContent = modal;
   //todo select modal content from ???
@@ -30,10 +33,7 @@ export function openModal(modal, content) {
 
   const modal_window = document.getElementById('modal-window');
   modal_window.classList.add('pop');
-
-  const modal_overlay = document.getElementById('modal-overlay');
-  modal_overlay.classList.remove('hidden');
-
+  document.getElementById('modal-overlay').classList.remove('hidden');
   setTimeout(() => modal_window.classList.remove('pop'), 150);
 }
 
@@ -83,7 +83,7 @@ export function updateLoopActionButtons(loop) {
 /* LOOP CARD (PHASE1) */
 //todo split out ui updates into modules?
 
-export function initLoopUI(loop, count=30) {
+export function initLoopUI(loop, stars=30) {
   //get loop card and init UI functions
   //todo probably more stuff later?
   const card = document.getElementById(loop.cardname);
@@ -94,7 +94,7 @@ export function initLoopUI(loop, count=30) {
   if(container === null) { return; }
   container.innerHTML = ''; //clear existing stars on load
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < stars; i++) {
     const star = document.createElement("div");
     star.className = "loop-star";
 

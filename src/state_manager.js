@@ -21,7 +21,7 @@ export function initGameState(state, loadauto = true) {
         //console.warn("Offline progress lost - TODO!");
     }
 
-    new_state.lastTime = Date.now();
+    new_state.lasttime = Date.now();
     return new_state;
 }
 

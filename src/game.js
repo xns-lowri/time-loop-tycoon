@@ -3,7 +3,7 @@ import {
   liveTickAllLoops, 
   loopUpdateAction, 
   loopUpdateCheat,
-  loopUpgrades } from "./time_loops.js";
+  loopUpgrades } from "./logic/logic_timeloops.js";
 import { 
   initLoopUI,
   updateUI, 
@@ -34,7 +34,7 @@ function bindNewState(state) {
       save: saveGame,
       load: loadGame,
       reset: () => bindNewState(initGameState(null, false)),
-      autoload: () => bindNewState(loadGame(true)),
+      autoload: () => bindNewState(initGameState(null, true)),
   });
 
   //todo build ui stuff including:
@@ -44,13 +44,17 @@ function bindNewState(state) {
   }
 
   //calculate offline progress
+  /*
   const now = Date.now();
   const game_delta = (now - gameState.lasttime) / 1000; // seconds
+  //console.log(now, gameState.lasttime, game_delta);
 
   gameState.lasttime = now;
   gameState.lastAutosave = now - 900;
 
   liveTickAllLoops(game_delta, gameState);
+  */
+  //finally update ui
   updateUI(gameState);
 }
 

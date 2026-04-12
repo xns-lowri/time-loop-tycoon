@@ -1,5 +1,5 @@
-import { augments } from "./objects/upgrades_p1.js";
-import { capitalFirst } from "./helpers/string_format.js";
+import { augments } from "../objects/upgrades_timeloops.js";
+import { capitalFirst } from "../helpers/string_format.js";
 
 // base rates
 const BASE_DURATION = 60;

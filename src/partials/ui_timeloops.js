@@ -62,3 +62,5 @@ export const loopaugments =
     </div>
 
 </div>`;
+
+//todo render functions for loop card, augments, automation etc
