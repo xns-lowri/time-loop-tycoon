@@ -24,13 +24,11 @@ export function bindMainUI(state, handlers) {
   document.getElementById("autosave").onclick = () => handlers.save(state, true);
   document.getElementById("autoload").onclick = () => handlers.autoload();
 
-  document.getElementById("modal-close").onclick = () => {
-    const modal = document.getElementById('modal-overlay');
-    modal.classList.add('hidden');
-    //modal.style.opacity = 0;
-    const modalcontent = document.getElementById('modal-content');
-    modalcontent.innerHTML = '';
-  }
+  document.getElementById("modal-overlay").onclick = () => {
+    if(document.getElementById("modal-window").matches(':hover')) { return; }
+    closeModal();
+  };
+  document.getElementById("modal-close").onclick = () => closeModal();
 }
 /* UX BINDINGS */
 
@@ -50,6 +48,14 @@ export function openModal(title, content, binding) {
   modal_window.classList.add('pop');
   document.getElementById('modal-overlay').classList.remove('hidden');
   setTimeout(() => modal_window.classList.remove('pop'), 150);
+}
+
+export function closeModal() {
+  const modal = document.getElementById('modal-overlay');
+  modal.classList.add('hidden');
+  //modal.style.opacity = 0;
+  const modalcontent = document.getElementById('modal-content');
+  modalcontent.innerHTML = '';
 }
 /* TOP-LEVEL RENDERING */
 
@@ -91,4 +97,10 @@ export function pulseElement(element) {
   element.classList.remove("pulse");
   element.classList.add("pulse");
   setTimeout(() => element.classList.remove("pulse"), 200);
+}
+
+export function poundElement(element) {
+  element.classList.remove("pound");
+  element.classList.add("pound");
+  setTimeout(() => element.classList.remove("pound"), 200);
 }

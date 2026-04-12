@@ -27,6 +27,7 @@ const units = [
 ]
 
 export function formatDecimalAsTime(value, options = { label:'short' }) {
+    if(!options.label) { options.label = 'short'; }
     let result = [];
     //console.log("spare time =", value, value.toFixed(3), value.toFixed(0));
     value = value.toFixed(3);

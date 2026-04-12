@@ -7,7 +7,8 @@ import {
   initUI,
   renderGame, 
   bindMainUI, 
-  pulseElement } from "./ui.js";
+  pulseElement,
+  poundElement } from "./ui.js";
 
 import { 
   initGame, 
@@ -61,6 +62,7 @@ function startGame(state) {
 export function gainSparetime(value) {
   if(value <= 0) { return; }
   gameState.sparetime += value;
+  gameState.sparetime = Math.round(gameState.sparetime * 1000) / 1000;
   pulseElement(document.getElementById('sparetime'));
   //pulse green
 }
@@ -69,6 +71,8 @@ export function spendSparetime(value) {
   if(value <= 0) { return null; }
   if(gameState.sparetime < value) { return false; }
   gameState.sparetime -= value;
+  gameState.sparetime = Math.round(gameState.sparetime * 1000) / 1000;
+  poundElement(document.getElementById('sparetime'));
   //pulse red?
   return true;
 }

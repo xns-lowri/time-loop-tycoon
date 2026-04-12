@@ -117,6 +117,7 @@ function incrementLoop(dt, loop) {
 
   loop.prospectiveresourcedelta = calculateWorkRate(loop);
   loop.sleeptimedelta = calculateNextRest(loop);
+  loop.sparetimedelta = calculateSparetimeGain(loop);
 }
 
 function calculateWorkRate(loop) {
@@ -142,9 +143,13 @@ function calculateNextRest(loop) {
   return newRest;
 }
 
+function calculateSparetimeGain(loop) {
+  return Math.floor(Math.pow(loop.resource, 0.6) * loop.rested) / 10;
+}
+
 function endLoop(loop) {
   // calculate leftover time
-  const sparetimegain = Math.floor(Math.pow(loop.resource, 0.6) * loop.rested) / 10;
+  const sparetimegain = calculateSparetimeGain(loop);
   // calculate next rest bonus
   //let newRest = 1 + FACTOR_REST * Math.pow(loop.sleeptime, 0.8);
 
@@ -215,26 +220,18 @@ export function loopUpgrades(state, action, loop) {
   else if(action==='augments') {
     //augments menu
     //console.log("Augments menu:", state, loop, augments, buyLoopAugments);
-    openAugmentsModal(state, loop, augments, buyLoopAugments);
+    openModal(
+      `Augments for Loop ${loop.id}`, 
+      { //render
+        callback: renderAugmentsModal, 
+        params: {state, loop, augments}
+      },
+      { //binder
+        callback: bindLoopUpgradesModal,
+        params: {state, loop, buyhandler: buyLoopAugments}
+      }
+    ); //linked modal rendering through callback
   }
-}
-
-
-function openAugmentsModal(state, loop, augments, buyhandler) {
-  openModal(
-    `Augments for Loop ${loop.id}`, 
-    { //render
-      callback: renderAugmentsModal, 
-      params: {state, loop, augments}
-    },
-    { //binder
-      callback: bindLoopUpgradesModal,
-      params: {state, loop, buyhandler}
-    }
-    
-  ); //linked modal rendering through callback
-
-  //bindLoopUpgradesModal(state, loop, buyhandler);
 }
 
 

@@ -33,6 +33,7 @@ export const state = {
       knowledgedelta: 0,
       resteddelta: 1,
       sleeptimedelta: 0,
+      sparetimedelta: 0,
 
       //todo work/study/sleep multipliers
       //todo augments

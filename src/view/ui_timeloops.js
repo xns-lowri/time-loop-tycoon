@@ -173,7 +173,7 @@ export function renderAugmentsModal({state, loop, augments}, modal) {
               augment.hooks.isLocked(loop) ? augment.lockdesc : augment.description
             }</div>
             <div class="flex-fill"></div>
-            <div class="upgrade-cost">${owned ? "Owned" : "Cost: "+formatDecimalAsTime(augment.cost, {figs:1,nomil:true,label:'short'})}</div>
+            <div class="upgrade-cost">${owned ? "Owned" : "Cost: "+formatDecimalAsTime(augment.cost, {figs:1,nomil:true})}</div>
           </div>
         </div>
       </div>`
@@ -209,6 +209,7 @@ export function renderLoopCard(loop) {
   card.querySelector('#prospective-resource-delta').textContent = "(+" + loop.prospectiveresourcedelta.toFixed(2) + "/s)";
   card.querySelector('#knowledge-delta').textContent = "+" + loop.knowledgedelta.toFixed(1) + "/s";
   card.querySelector('#rested-delta').textContent = "⇨ " + loop.sleeptimedelta.toFixed(2) + "x";
+  card.querySelector('#sparetime-delta').textContent = "⇨ " + formatDecimalAsTime(loop.sparetimedelta, {trim: 3});
   
   card.querySelector('#action').textContent = capitalFirst(loop.action || 'idl');
   card.querySelector("#loop-progress-bar").style.width = ((loop.curtime/loop.duration) * 100) + "%";
@@ -237,6 +238,7 @@ const loopcard =
 
         <div class="loop-header-content">
             <div class="ctext"><div>Day #<span id="loop">0</span></div></div>
+            <div class="ctext"><span id="sparetime-delta" class="hidden">⇨ 0s</span></div>
             <div class="ctext"><div>⏲️ <span id="curtime">0</span> / <span id="duration">0</span>s</div></div>
         </div>
     </div>
