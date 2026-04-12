@@ -184,5 +184,5 @@ function buyLoopAugments(state, loop, id) {
     return;
   }
 
-  console.log("you can buy!", state.sparetime, augment.cost);
+  console.log("you can buy!", state.sparetime, augment.cost, loop.id);
 }

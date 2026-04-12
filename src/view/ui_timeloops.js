@@ -142,10 +142,7 @@ function bindLoopCheats(loop, handler) {
 
 
 export function openAugmentsModal(state, loop, augments, buyhandler) {
-  console.log("Augment modal:", state, loop, augments, buyhandler);
-
   openModal(
-    state, 
     `Augments for Loop ${loop.id}`, 
     { //render
       callback: renderAugmentsModal, 
@@ -158,17 +155,18 @@ export function openAugmentsModal(state, loop, augments, buyhandler) {
     
   ); //linked modal rendering through callback
 
-  bindLoopUpgradesModal(state, loop, buyhandler);
+  //bindLoopUpgradesModal(state, loop, buyhandler);
 }
 
 
 //modal bindings, todo refactor
-function bindLoopUpgradesModal(state, loop, callback) {
+function bindLoopUpgradesModal({state, loop, buyhandler}) {
+  console.log(state, loop, buyhandler);
   const card = document.getElementById('modal-content');
   if(card === null) { return; }
   card.querySelectorAll(".upgrade-card")
     .forEach((augment) => {
-      augment.onclick = () => callback(state, loop, augment.id);
+      augment.onclick = () => buyhandler(state, loop, augment.id);
     });
 }
 

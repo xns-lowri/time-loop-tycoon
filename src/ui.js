@@ -6,8 +6,7 @@ const currentModal = {
   open: false,
   type: "augments",
   content: {},
-  binding: {},
-  params: {}
+  binding: {}
 }
 
 export function initUI(state, handlers) {
@@ -37,7 +36,7 @@ export function bindMainUI(state, handlers) {
 
 
 //todo html injection = bad soc here?? :(
-export function openModal(state, title, content, binding) {
+export function openModal(title, content, binding) {
   document.getElementById('modal-title').textContent = title;
   //todo select modal content from ???
   currentModal.content = content;
@@ -54,12 +53,14 @@ export function openModal(state, title, content, binding) {
 }
 /* TOP-LEVEL RENDERING */
 
-function renderModal(state) {
+function renderModal() {
   if(!currentModal.open) {return;}
   if(currentModal.content.callback === null) {return;}
   const html_updated = currentModal.content.callback(currentModal.content.params, currentModal);
   if(html_updated === null) { return; } //don't update unnecessarily - ruins transitions n effects
+  
   document.getElementById('modal-content').innerHTML = html_updated;
+  currentModal.binding.callback(currentModal.binding.params);
 }
 
 /* TOP LEVEL (MAIN UI) RENDERING */
