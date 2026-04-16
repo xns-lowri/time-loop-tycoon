@@ -39,6 +39,11 @@ body {
 }
 
 /* time loop (phase 1) UI styles */
+.loop-grid-container {
+  display: flex;
+  justify-content: space-around;
+}
+
 .loop-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -53,6 +58,7 @@ body {
   min-height: 180px;
   transition: background 0.2s linear;
   position: relative;
+  min-width: 320px;
 }
 
 .loop-card.empty {

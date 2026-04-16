@@ -122,7 +122,7 @@ export const augments = [
     },
     {
         icon: "🌞",
-        id: "glasses-time",
+        id: "glasses-2",
         name: "Time Glasses??",
         description: "Show Spare Time as it accumulates each day",
         lockdesc: "Try another pair first.",

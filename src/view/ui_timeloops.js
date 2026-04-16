@@ -25,11 +25,13 @@ export function initAllTimeLoops(state, handlers) {
   const game_area = document.getElementById('game-area');
   if(game_area === null) {return;} //big badda boom
 
-  const old_ui = document.getElementById('loop-grid');
+  const old_ui = document.getElementById('loop-grid-container');
   if(old_ui) { document.getElementById('game-area').removeChild(old_ui); }
   
+  const new_container = newElement('div', { id:'loop-grid-container', class:'loop-grid-container' });
   const new_grid = newElement('div', { id:'loop-grid', class:'loop-grid' });
-  game_area.appendChild(new_grid);
+  new_container.appendChild(new_grid);
+  game_area.appendChild(new_container);
 
   //todo add correct number of loop cards
   for(const key in state.timeloops) {
